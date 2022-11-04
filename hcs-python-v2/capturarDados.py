@@ -1,5 +1,6 @@
 import platform
 import psutil
+import datetime
 
 
 def dadosCPU():
@@ -58,22 +59,6 @@ def dadosDisco():
     print('=-='*43)
 
 
-def processos():
-    list_processos = []
-    for proc in psutil.process_iter():
-        cpu_percent = proc.cpu_percent()
-        processos_info = proc.as_dict(
-            ['name', 'cpu_percent', 'memory_percent'])
-        print(processos_info)
-        print(round(proc.memory_percent(), 2))
-        print(cpu_percent)
-        if processos_info['cpu_percent'] > 0:
-            list_processos.append(processos_info)
-
-        process_order = sorted(
-            list_processos, key=lambda p: p['cpu_percent'], reverse=True)[:10]
-
-
 def temperatura():
     temperatura = psutil.sensors_temperatures()
     for name, entries in temperatura.items():
@@ -82,5 +67,19 @@ def temperatura():
             print("%-20s %s °C" % (
                 entry.label or name, entry.current))
 
+
+def processos():
+    lista_processos = []
+    for proc in psutil.process_iter():
+        cpu_percent = proc.cpu_percent(interval= 0.5) 
+        criacao = proc.create_time()
+        horario = datetime.datetime.fromtimestamp(criacao).strftime("%Y-%m-%d %H:%M:%S")
+        info = proc.as_dict(attrs = ['pid','name', 'cpu_percent', 'create_time'])
+        info['cpu_percent'] = cpu_percent
+        info['create_time'] = horario
+        if(cpu_percent > 0):
+            lista_processos.append(info)
+            for i in lista_processos:
+                print(info)
 
 processos()
