@@ -4,6 +4,7 @@ import capturarDados
 import os
 import time
 import platform
+from conexao import  select
 
 """ 
 intro.callIntro() """
@@ -17,7 +18,9 @@ def login():
     senha = input(str("\033[1mDigite sua Senha:    \033[0m"))
     print("=-="*30)
 
-    while login != "teste@gmail.com" or senha != "1234":
+    dados = select(f"SELECT * FROM Funcionario WHERE email = '{login}' AND senha = '{senha}' AND cargo = 'TEC';")
+
+    while not dados:
         os.system(limpar)
         print("=-="*30)
         print("\033[1mCredenciais Inválidas. Digite Novamente\033[0m")
@@ -56,20 +59,14 @@ def main():
             print("=-="*30)
             time.sleep(1)
             break
-
         try:
-
             if opcaoMenu == '1':
                 isExibirDados = True
                 while isExibirDados:
                     print('=-='*30)
                     print(
                         "\033[1mPressione \033[91mCtrl + C\033[0m \033[1mpara voltar ao Menu!\033[0m")
-                    capturarDados.dadosCPU()
-                    capturarDados.dadosRAM()
-                    capturarDados.dadosDisco()
                     capturarDados.processos()
-                    time.sleep(1)
 
             else:
                 print('=-='*30)
@@ -86,5 +83,4 @@ def main():
 
 
 os.system(limpar)
-""" login()  """
 main()
