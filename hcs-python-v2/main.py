@@ -4,10 +4,8 @@ import capturarDados
 import os
 import time
 import platform
-from conexao import  select
+from sql_comandos import  select
 
-""" 
-intro.callIntro() """
 limpar = 'clear' if platform.system() == 'Linux' else 'cls'
 
 
@@ -81,6 +79,7 @@ def main():
             main()
             print(TypeError, NameError)
 
-
+""" 
+intro.callIntro() """
 os.system(limpar)
 main()

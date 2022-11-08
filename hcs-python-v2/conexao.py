@@ -1,32 +1,21 @@
 import mysql.connector
-import pymysql
+from lib2to3.pgen2 import driver
+import pyodbc
 
-conexao = mysql.connector.connect(
-    host="localhost", user="root", password="matheus", database="hardware_control_system", autocommit=True)
+def criar_conexao_cloud():
+    driver = "ODBC Driver 18 for SQL Server"
+    server = "tcp:hcs-bd.database.windows.net,1433"
+    database = "hcs-bd"
+    username = "hcs-Grupo09"
+    password = "hardwareCSg9"
+    
+    string_conexao = 'Driver={'+ driver +'};'+ 'Server=' + server + ';Database=' + database +';Uid='+ username + ';Pwd='+ password + ';Encrypt=yes;TrustServerCertificate=no;Connection Timeout=30;'
+    conexao = pyodbc.connect(string_conexao)
+    return conexao
 
-def criar_conexao(host, usuario, senha, nomeDoBD):
+
+def criar_conexao_local():
+    return mysql.connector.connect(host="localhost", user="root", password="matheus", database="hardware_control_system", autocommit=True)
+
+def criar_conexao_teste(host, usuario, senha, nomeDoBD):
     return mysql.connector.connect(host=host, user=usuario, password=senha, database=nomeDoBD, autocommit=True)
-
-def insert_dados(con, dados):
-    cursor = con.cursor()
-    sql = "INSERT INTO testeTable (horario, cpu_perc, ram_perc, disco_perc, proc_nome, proc_cpu_uso) values (now(), %s, %s ,%s, %s, %s)"
-    cursor.execute(sql, dados)
-    cursor.close()
-
-def select(query):
-    try:
-        conexao.reconnect()
-        cursor = conexao.cursor()
-        cursor.execute(query)
-        dados = cursor.fetchone()
-    except mysql.connector.Error as error:
-        print('Erro')
-        dados = error
-    finally:
-        if conexao.is_connected():
-            cursor.close()
-            conexao.close()
-            return dados
-
-def fechar_conexao(con):
-    return con.close()

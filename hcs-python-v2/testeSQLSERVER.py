@@ -1,6 +1,5 @@
-from dataclasses import dataclass
 from lib2to3.pgen2 import driver
-from sqlite3 import Cursor, Row
+import logging
 import pyodbc
 
 driver = "ODBC Driver 18 for SQL Server"
@@ -13,7 +12,11 @@ string_conexao = 'Driver={'+ driver +'};'+ 'Server=' + server + ';Database=' + d
 
 conexao = pyodbc.connect(string_conexao)
 cursor = conexao.cursor()
-cursor.execute("SELECT * FROM Funcionario where id_funcionario = 1")
-row = cursor.fetchone()
+cursor.execute("SELECT * FROM Funcionario")
+rows = cursor.fetchall()
+teste = True
+login = ''
+senha = ''
 
-print(row)
+for row in rows:
+       print(row)
