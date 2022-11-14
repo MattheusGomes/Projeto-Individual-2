@@ -5,7 +5,7 @@ body {
     background-image: url(../assets/img/loginBackground2.jpg);
 }
 img{
-    width: 20%;
+    width: 30%;
 }
 .infoCarro {
     border: 1px solid black;
@@ -13,16 +13,27 @@ img{
     justify-content: space-around;
     align-items: center;
     padding: 1%;
+    background: darkgray;
 }
 
 .tipoCarro{
     border: 1px solid black;
+    border-radius: 25px;
+    width: 20%;
     display: flex;
     justify-content: space-around;
+    align-items: center;
     padding: 1%;
+    font-size: 16px;
+    background: white;
 }
 .info{
     display: flex;
     justify-content: space-evenly;
     flex-direction: column;
+}
+
+.graficos{
+    border: 1px solid black;
+    height: 70vh;
 }
