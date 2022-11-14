@@ -3,7 +3,7 @@ import psutil
 import datetime
 import os
 from conexao import criar_conexao_teste
-from sql_comandos import insert_dados, insert_cpu,insert_ram, insert_disco
+from sql_comandos import insert_dados, insert_cpu,insert_ram, insert_disco, insert_proc
 #crawler
 from urllib3 import PoolManager
 from json import loads
@@ -19,7 +19,7 @@ def dadosCPU():
     nucleos = psutil.cpu_count(logical=False)
     processadoresLogicos = psutil.cpu_count() - psutil.cpu_count(logical=False)
     threads = psutil.cpu_count()
-    crawler = True
+    crawler = False
 
     if platform.system() == 'Linux':
         temps = psutil.sensors_temperatures()
@@ -115,7 +115,7 @@ def processos():
     process_lista = []
     while True:
         for proc in psutil.process_iter():
-            cpu_percent = proc.cpu_percent(interval= 0.5)
+            cpu_percent = proc.cpu_percent(interval = 0.5)
             exibir() 
             horario = datetime.datetime.fromtimestamp(
                 proc.create_time()).strftime("%d-%m-%Y %H:%M")
@@ -123,12 +123,15 @@ def processos():
             info['cpu_percent'] = round(cpu_percent / psutil.cpu_count(), 1)
             info['create_time'] = horario
 
-            #insert_dados(dados) 
-            
+            insert_dados(dados) 
             if (cpu_percent > 0):
                 process_lista.append(info)
-            
+                dados = info['pid'], info['name'], info['cpu_percent']
+                insert_proc(dados)
+
+
             print('\033[1mPROCESSOS\033[0m\n')
+            
             for i in process_lista:
                 prossID = i['pid']
                 processo = i['name']

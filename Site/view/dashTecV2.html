@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="css/detalheTec.css">
+    <title>Carro</title>
+</head>
+
+<body onload="verCarro()">
+
+    <div class="infoCarro">
+        <div class="tipoCarro">
+            <img src="https://cdn-icons-png.flaticon.com/512/68/68321.png" alt="">
+            <div class="info"> <span id="placaCarro">123</span>
+                <span id="modelo">Model S</span>
+
+            </div>
+
+        </div>
+        <div class="infoCarro">
+            <img src="https://img.freepik.com/free-icon/cpu_318-932062.jpg?w=2000" alt="">
+            <span class="valorComp" id="valCPU">Uso%</span>
+        </div>
+        <div class="infoCarro">
+            <img src="https://www.freeiconspng.com/uploads/ram-icon-png-11.png" alt="">
+            <span class="valorComp" id="valRam">Uso%</span>
+        </div>
+
+        <div class="infoCarro">
+            <img src="https://cdn-icons-png.flaticon.com/512/173/173697.png" alt="">
+            <span class="valorComp" id="valDisk">Uso%</span>
+        </div>
+    </div>
+
+    <!--  <div class="graficos">
+        <div class="grafico2">
+            <div class="graficoBarraRAM" id="graficoBarraRAM"><canvas id="grafico2"></canvas></div>
+        </div>
+
+    </div> -->
+
+</body>
+
+</html>
+
+<script src="js/dashTEC.js"></script>
+<script src="js/detalhesTEC.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>

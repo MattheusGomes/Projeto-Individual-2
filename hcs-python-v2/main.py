@@ -10,14 +10,11 @@ limpar = 'clear' if platform.system() == 'Linux' else 'cls'
 
 
 def login():
-    print("=-="*30)
-    login = input(str("\033[1mDigite seu login:    \033[0m"))
-    print("=-="*30)
-    senha = input(str("\033[1mDigite sua Senha:    \033[0m"))
-    print("=-="*30)
 
-    dados = select(f"SELECT * FROM Funcionario WHERE email = '{login}' AND senha = '{senha}' AND cargo = 'TEC';")
-
+    #dados = select(f"SELECT * FROM Funcionario WHERE email = '{login}' AND senha = '{senha}' AND cargo = 'TEC';")
+    enderecoMac = 'C2-F2-9F-2A-F9-7C'
+    dados = select(f"SELECT * FROM Carro WHERE endereco_mac = {enderecoMac}")
+    
     while not dados:
         os.system(limpar)
         print("=-="*30)
@@ -82,4 +79,4 @@ def main():
 """ 
 intro.callIntro() """
 os.system(limpar)
-main()
+login()

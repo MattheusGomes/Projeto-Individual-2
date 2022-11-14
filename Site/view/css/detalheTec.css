@@ -1,0 +1,28 @@
+body {
+    margin: 0;
+    font-family: 'Tajawal', sans-serif;
+    background-color: yellow;
+    background-image: url(../assets/img/loginBackground2.jpg);
+}
+img{
+    width: 20%;
+}
+.infoCarro {
+    border: 1px solid black;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    padding: 1%;
+}
+
+.tipoCarro{
+    border: 1px solid black;
+    display: flex;
+    justify-content: space-around;
+    padding: 1%;
+}
+.info{
+    display: flex;
+    justify-content: space-evenly;
+    flex-direction: column;
+}
