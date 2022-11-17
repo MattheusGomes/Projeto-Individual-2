@@ -19,7 +19,7 @@ def dadosCPU():
     nucleos = psutil.cpu_count(logical=False)
     processadoresLogicos = psutil.cpu_count() - psutil.cpu_count(logical=False)
     threads = psutil.cpu_count()
-    crawler = False
+    crawler = True
 
     if platform.system() == 'Linux':
         temps = psutil.sensors_temperatures()
@@ -123,7 +123,6 @@ def processos():
             info['cpu_percent'] = round(cpu_percent / psutil.cpu_count(), 1)
             info['create_time'] = horario
 
-            insert_dados(dados) 
             if (cpu_percent > 0):
                 process_lista.append(info)
                 dados = info['pid'], info['name'], info['cpu_percent']
@@ -138,6 +137,3 @@ def processos():
                 cpu = i['cpu_percent']
                 hor = i['create_time']
                 print(f'\033[1mPID: \033[95m{prossID}\033[0m \033[1mProcesso: \033[95m{processo}\033[0m \033[1mConsumo CPU(%): \033[95m{cpu}%\033[0m \033[1mHorario: \033[95m{hor}\033[0m')
-
-
-processos()

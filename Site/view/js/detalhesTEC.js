@@ -1,9 +1,9 @@
 setInterval(() => {
     /*  gerarGraficos() */
-    verDispositivo()
-    verProcesso()
-    graficoPrincipal()
-}, 1000);
+    /* verProcesso() */
+    /*    graficoPrincipal() */
+    gerarDados()
+}, 10000);
 
 function verCarro() {
 
@@ -33,7 +33,7 @@ function verCarro() {
     })
 }
 
-
+/* 
 function verDispositivo() {
     var idCarro = sessionStorage.ID_Carro;
     var vtCPU = []
@@ -95,8 +95,70 @@ function verProcesso() {
         })
     }).then(function (resposta) {
         if (resposta.ok) {
-
             resposta.json().then(json => {
+    
+                console.log(`Dados recebidos: ${JSON.stringify(json)}`);
+                graficoPrincipal(json)
+                
+                
+                var i = 0
+                for (var index = json.length - 1; index >= 0; index--) {
+                    vtNomeProcessos.push(json[index].nome)
+                    vtConsumoProcessos.push(json[index].cpu_perc)
+                    vtDataSemFormatacao.push(json[index].horario_registro)
+                    vtPidProcessos.push(json[index].pid)
+
+                    //Separando e formatando data e hora
+                    var limparData = vtDataSemFormatacao[i].split('.');
+                    var separarHorario = limparData[0].split('T');
+
+                    vtData.push(separarHorario[0]);
+                    vtHorario.push(separarHorario[1]);
+
+                    vtData[i] = vtData[i].split('-').reverse().join('/');
+
+                    sessionStorage.Horarios = vtHorario;
+                    sessionStorage.pid = vtPidProcessos;
+                    sessionStorage.nomeProcesso = vtNomeProcessos;
+                    sessionStorage.processoUsoCpu = vtConsumoProcessos;
+                    i++;
+                }
+
+            })
+
+        }
+    })
+}
+ */
+
+function gerarDados() {
+    //processos
+
+    var disps
+    var procs
+    var idCarro = sessionStorage.ID_Carro;
+    var vtData = []
+    var vtHorario = []
+    var vtDataSemFormatacao = []
+    var vtNomeProcessos = []
+    var vtPidProcessos = []
+    var vtConsumoProcessos = []
+
+    fetch("/dashTecnico/processos", {
+        method: 'POST',
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            idCarro: idCarro
+        })
+    }).then(function (resposta) {
+        if (resposta.ok) {
+            resposta.json().then(json => {
+
+                procs = json
+                console.log("processos", procs)
+
 
                 var i = 0
                 for (var index = json.length - 1; index >= 0; index--) {
@@ -118,7 +180,6 @@ function verProcesso() {
                     sessionStorage.pid = vtPidProcessos;
                     sessionStorage.nomeProcesso = vtNomeProcessos;
                     sessionStorage.processoUsoCpu = vtConsumoProcessos;
-
                     i++;
                 }
 
@@ -126,10 +187,58 @@ function verProcesso() {
 
         }
     })
+
+    //Dispositivos
+    var idCarro = sessionStorage.ID_Carro;
+    var vtCPU = []
+    var vtRAM = []
+
+    fetch("/dashTecnico/dispositivos", {
+        method: 'POST',
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            idCarro: idCarro
+        })
+    }).then(function (resposta) {
+        if (resposta.ok) {
+
+            resposta.json().then(json => {
+
+                disps = json
+                console.log("dispi", disps)
+
+                for (var index = json.length - 1; index >= 0; index--) {
+                    tipoDisp = json[index].tipo
+                    horario = json[index].horario_registro
+                    valor = json[index].valor
+
+
+                    if (tipoDisp == "RAM") {
+                        valRam.innerHTML = `${valor}%`
+                        vtRAM.push(valor)
+                    } else if (tipoDisp == "CPU") {
+                        valCPU.innerHTML = `${valor}%`
+                        vtCPU.push(valor)
+                    } else {
+                        valDisk.innerHTML = `${valor}%`
+                    }
+                }
+                sessionStorage.cpu = vtCPU;
+                sessionStorage.ram = vtRAM;
+
+            })
+
+        }
+    })
+    
+    graficoPrincipal(disps, procs)
 }
 
 
-function graficoPrincipal() {
+function graficoPrincipal(dispositivo ,processo) {
+
     //Pegando cada horario individualmente    
     horario = sessionStorage.Horarios.split(',')
     cpu = sessionStorage.cpu
@@ -145,171 +254,65 @@ function graficoPrincipal() {
         console.log(processoCPU)
         console.log(horario[0]) 
           */
+    console.log('iniciando plotagem do gráfico...');
+    document.getElementById("grafico1").remove();
 
-}
+    var divGrafico = document.getElementById("graficoBarraRAM");
+    var canvas = document.createElement("canvas");
+    canvas.id = "grafico1";
 
+    divGrafico.appendChild(canvas);
 
+    let labels = [];
 
-/* 
+    var dados = {
+        labels: labels,
+        datasets: [
+            {
+                yAxisID: 'y-usoCpu',
+                label: 'Uso da cpu',
+                lineTension: 0.3,
+                backgroundColor: "rgba(78, 115, 223, 0.5)",
+                borderColor: "rgba(78, 115, 223, 1)",
+                pointRadius: 3,
+                pointBackgroundColor: "rgba(78, 115, 223, 1)",
+                pointBorderColor: "rgba(78, 115, 223, 1)",
+                pointHoverRadius: 3,
+                pointHoverBackgroundColor: "rgba(78, 115, 223, 1)",
+                pointHoverBorderColor: "rgba(78, 115, 223, 1)",
+                pointHitRadius: 10,
+                pointBorderWidth: 2,
+                data: [0, 50, 20, 45, 10, 30, 22, 55, 35, 10, 95, 50],
+                fill: true,
+                data: [],
+            },
+        ],
+        options: {
+            maintainAspectRatio: false,
+            responsive: true
+        }
+    };
 
-
-function apresentar() {
-var idCarro = sessionStorage.ID_Carro;
-vtDataSemFormatacao = []
-vtHorario = []
-vtData = []
-fetch("/dashTecnico/verDetalhes", {
-    method: 'POST',
-    headers: {
-        "Content-Type": "application/json"
-    },
-    body: JSON.stringify({
-        idCarro: idCarro
-    })
-}).then(function (resposta) {
-    if (resposta.ok) {
-
-        resposta.json().then(json => {
-            for (var index = 0; index < json.length; index++) {
-                mac = json[index].endereco_mac
-                placa = json[index].placa_carro
-                modelo = json[index].tipo
-                tipo = json[index].tipo
-                unidadeMedida = json[index].unid_medida
-                vtDataSemFormatacao.push(json[index].proc_horario)
-                valorMedida = json[index].valor
-
-                //var dataFormatada = vtDataSemFormatacao[0].split(' ').reverse().join('/');
-
-                var limparData = vtDataSemFormatacao[index].split('.');
-                var separarHorario = limparData[0].split('T');
-                vtData.push(separarHorario[0])
-                vtHorario.push(separarHorario[1])
-
-                //graficos
-                const labels = [
-                    // Colocar aqui o tempo da coleta, estes são os títulos das barras
-                    vt_ModeloCarrosRAM[0],
-                    vt_ModeloCarrosRAM[1],
-                    vt_ModeloCarrosRAM[2],
-                    vt_ModeloCarrosRAM[3],
-                    vt_ModeloCarrosRAM[4],
-                ];
-
-
-                const data = {
-                    labels: labels,
-                    datasets: [{
-                        label: 'My First Dataset',
-                        data: [65, 59, 80, 81, 56, 55, 40],
-                        fill: false,
-                        borderColor: 'rgb(75, 192, 192)',
-                        tension: 0.1
-                    }]
-                };
-
-                const config = {
-                    type: 'line',
-                    data: data,
-                };
-
-
-            }
-        })
-
+    for (i = 0; i < dispositivo.length; i++) {
+        var registro = dispositivo[i];
+        labels.push(registro.horario_registro);
+        dados.datasets[0].data.push(registro.cpu_perc);
     }
-})
+
+    console.log(JSON.stringify(dados));
+
+    const config = {
+        type: 'line',
+        data: dados,
+        options: {
+            maintainAspectRatio: false,
+            responsive: true,
+        }
+    };
+
+    let myChartCpu = new Chart(
+        document.getElementById('grafico1'),
+        config
+    );
+
 }
-
-function gerarGraficos() {
-
-
-vt_ModeloCarrosRAM = [];
-vt_MediasRAM = []
-
-fetch("/dashGestor/mediaRamCarros", {
-    method: 'POST',
-    headers: {
-        "Content-Type": "application/json"
-    },
-    body: JSON.stringify({
-        idEmpresa: sessionStorage.ID_EMPRESA
-    })
-}).then(function (resposta) {
-    if (resposta.ok) {
-
-        resposta.json().then(json => {
-
-            for (let i = 0; i < json.length; i++) {
-                vt_ModeloCarrosRAM.push(json[i].ModeloCarro);
-                vt_MediasRAM.push(parseFloat((json[i].MediaConsumo)));
-            }
-            var porcentagemCategeoriaGraficoRAM = 0
-            var porcentagemBarraGraficoRAM = 0
-
-            if (vt_ModeloCarrosRAM.length < 2) {
-                porcentagemCategeoriaGraficoRAM = 0.2
-                porcentagemBarraGraficoRAM = 0.7
-            }
-            else {
-                porcentagemCategeoriaGraficoRAM = 0.6
-                porcentagemBarraGraficoRAM = 0.9
-            }
-
-
-            document.getElementById('grafico2').remove();
-            novoGraficoRAM = document.createElement('canvas');
-            novoGraficoRAM.setAttribute('id', 'grafico2');
-            graficoBarraRAM.appendChild(novoGraficoRAM);
-
-
-            const graficoUsoRAM = [
-                // Colocar aqui o tempo da coleta, estes são os títulos das barras
-                vt_ModeloCarrosRAM[0],
-                vt_ModeloCarrosRAM[1],
-                vt_ModeloCarrosRAM[2],
-                vt_ModeloCarrosRAM[3],
-                vt_ModeloCarrosRAM[4],
-            ];
-
-            // Dados do gráfico
-            const dados2 = {
-                labels: graficoUsoRAM, // Nome da variável do gráfico
-                datasets: [{
-                    label: 'Uso de RAM (%)',// Título
-                    categoryPercentage: porcentagemCategeoriaGraficoRAM,
-                    barPercentage: porcentagemBarraGraficoRAM,
-                    backgroundColor: '#b449de', // cor de fundo
-                    borderColor: 'black', // cor da borda
-                    data: [vt_MediasRAM[0], vt_MediasRAM[1], vt_MediasRAM[2], vt_MediasRAM[3], vt_MediasRAM[4]], // Plot dos valores embaixo das barras
-                },
-                ]
-            };
-
-            // Configurações do gráfico
-            const config2 = {
-                type: 'bar', // Define para o tipo barra
-                data: dados2, // Diz quais dados serão referentes àquele gráfico
-                options: {
-                    scales: {
-                        y: {
-                            min: 0,
-                            max: 100,
-                            beginAtZero: true
-                        }
-                    },
-                    animation: 0
-                }
-            };
-
-            //Diz qual é a div que receberá o gráfico pronto
-            const grafico2 = new Chart(
-                document.getElementById('grafico2'),
-                config2
-            );
-        })
-    }
-})
-}
-
- */
