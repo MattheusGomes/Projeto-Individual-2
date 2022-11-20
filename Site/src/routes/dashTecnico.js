@@ -26,6 +26,14 @@ router.post("/processos", function (req, res) {
     console.log('Cheguei na rota!')
     dashTecnicoController.processos(req, res);
 });
+router.post("/dadosRam", function (req, res) {
+    console.log('Cheguei na rota!')
+    dashTecnicoController.pegarRam(req, res);
+});
+router.post("/dadosCpu", function (req, res) {
+    console.log('Cheguei na rota!')
+    dashTecnicoController.pegarCpu(req, res);
+});
 
 
 

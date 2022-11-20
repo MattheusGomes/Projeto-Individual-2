@@ -115,7 +115,7 @@ def processos():
     process_lista = []
     while True:
         for proc in psutil.process_iter():
-            cpu_percent = proc.cpu_percent(interval = 0.5)
+            cpu_percent = proc.cpu_percent(interval = 1)
             exibir() 
             horario = datetime.datetime.fromtimestamp(
                 proc.create_time()).strftime("%d-%m-%Y %H:%M")

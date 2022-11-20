@@ -33,7 +33,16 @@ img{
     flex-direction: column;
 }
 
-.graficos{
+.grafico{
     border: 1px solid black;
-    height: 70vh;
+    height: 40vh;
+}
+
+.grafico2{
+    border: 1px solid black;
+    height: 40vh;
+}
+
+#grafico1{
+    height: 40vh;
 }

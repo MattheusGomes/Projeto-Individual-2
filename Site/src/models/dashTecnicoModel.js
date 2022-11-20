@@ -22,22 +22,51 @@ function verDetalhes(idCarro) {
 
 function dispositivos(idCarro) {
     instrucaoSql = `
-    Select tipo, unid_medida, fk_carro,
+    Select   tipo, unid_medida, fk_carro,
     id_medida, Medida.horario_registro, Medida.valor AS 'valor'
     from Dispositivo, Carro, Medida 
     where Dispositivo.fk_carro = id_carro and fk_dispositivo = id_dispositivo 
-    and fk_carro = ${idCarro} 
-    order by id_medida desc limit 10;`;
+    and fk_carro = ${idCarro}
+    order by id_medida desc limit 5;`;
     console.log("Executando a instrução SQL: \n" + instrucaoSql);
     return database.executar(instrucaoSql);
 }
+
+
 function processo(idCarro) {
     instrucaoSql = `
     select pid, nome, fk_carro
     ,cpu_perc, horario_registro
     from Processo, MedidaProcesso
     where Processo.pid = fk_processo and fk_carro = ${idCarro}
-    order by horario_registro desc limit 10;`;
+    and  nome <> 'System Idle Process'
+    order by horario_registro desc limit 5 ;`;
+    console.log("Executando a instrução SQL: \n" + instrucaoSql);
+    return database.executar(instrucaoSql);
+}
+
+
+function pegarRam(idCarro) {
+    instrucaoSql = `
+    Select   tipo, unid_medida, fk_carro,
+    id_medida, Medida.horario_registro, Medida.valor AS 'valor'
+    from Dispositivo, Carro, Medida 
+    where Dispositivo.fk_carro = id_carro and fk_dispositivo = id_dispositivo 
+    and fk_carro = ${idCarro} and Dispositivo.tipo = "RAM"
+    order by id_medida desc limit 5;`;
+    console.log("Executando a instrução SQL: \n" + instrucaoSql);
+    return database.executar(instrucaoSql);
+}
+
+
+function pegarCpu(idCarro) {
+    instrucaoSql = `
+    Select   tipo, unid_medida, fk_carro,
+    id_medida, Medida.horario_registro, Medida.valor AS 'valor'
+    from Dispositivo, Carro, Medida 
+    where Dispositivo.fk_carro = id_carro and fk_dispositivo = id_dispositivo 
+    and fk_carro = ${idCarro} and Dispositivo.tipo = "CPU"
+    order by id_medida desc limit 10;`;
     console.log("Executando a instrução SQL: \n" + instrucaoSql);
     return database.executar(instrucaoSql);
 }
@@ -48,5 +77,7 @@ module.exports = {
     verCarrosProblema,
     verDetalhes,
     dispositivos,
-    processo
+    processo,
+    pegarCpu,
+    pegarRam
 }
