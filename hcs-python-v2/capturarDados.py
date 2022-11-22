@@ -32,11 +32,12 @@ def dadosCPU():
         print('\033[1mDADOS DE CPU (PROCESSADOR)\033[0m\n')
         print(f'\033[1mConsumo(%): \033[94m{consumoCPU}%\033[0m      \033[1mTemperatura: \033[94m{tempCPU}\033[0m     \033[1mNúcleos: \033[94m{nucleos}\033[0m      \033[1mProcessadores Lógicos: \033[94m{processadoresLogicos}\033[0m      \033[1mThreads: \033[94m{threads}\033[0m')
         print('=-='*43)
+        insert_cpu(str(consumoCPU), str(tempCPU))
 
     elif platform.system() != 'Linux' and crawler:
         with PoolManager() as pool:
             
-            response = pool.request('GET', 'http://localhost:8080/data.json')
+            response = pool.request('GET', 'http://localhost:8085/data.json')
             data = loads(response.data.decode('utf-8'))
             temp_value = data['Children'][0]['Children'][1]['Children'][1]['Children'][2]['Value']
             tempCPU = conversor(temp_value)

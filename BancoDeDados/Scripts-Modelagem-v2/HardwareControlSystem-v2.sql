@@ -75,10 +75,6 @@ insert into Dispositivo values (null, 'CPU', 'Intel Xeon - 2 vCpu ', '°C', null
 insert into Dispositivo values (null, 'RAM', 'Kingston 8GB', '%', null, 1); 
 insert into Dispositivo values (null, 'DISCO', 'Toshiba 20Gb', '%', null, 1); 
 
-select * from Dispositivo;
-select * from Medida;
-
-select * from carro;
 
 /*DADOS DA TESLA*/
 insert into Empresa values (null, 'Tesla Corporation', '35.008.715/0001-75');
@@ -147,6 +143,12 @@ FROM Empresa, Carro, Dispositivo, Medida
 WHERE fk_empresa = id_empresa AND fk_carro = id_carro AND fk_dispositivo = id_dispositivo
 GROUP BY id_empresa,Medida.valor,unid_medida, Carro.id_carro,Carro.modelo,Carro.placa_carro,tipo ;
 
+
+
+select * from Dispositivo;
+select * from Medida;
+
+select * from carro;
 /*Selecionando as tabelas dinâmicas referentes a empresa TESLA*/
 select * from vwDashGesCPU where CodEmpresa = 1;
 select * from vwDashGesRAM where CodEmpresa = 1;
