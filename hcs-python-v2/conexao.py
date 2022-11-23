@@ -19,3 +19,4 @@ def criar_conexao_local():
 
 def criar_conexao_teste(host, usuario, senha, nomeDoBD):
     return mysql.connector.connect(host=host, user=usuario, password=senha, database=nomeDoBD, autocommit=True)
+

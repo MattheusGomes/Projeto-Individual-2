@@ -40,21 +40,32 @@ def insert_proc(dados):
     con = criar_conexao_local()
     cursor = con.cursor()
 
-    pidExiste = select(f"select pid from Processo where pid = {dados[0]} and nome = '{dados[1]}';")
-    pid = dados[0]
+    procExiste = select(f"select id from Processo where nome = '{dados[1]}';")
+    pID = dados[0]
 
-    if pidExiste:    
-        cpuPer = str(dados[2])
-        sql = "INSERT INTO MedidaProcesso (horario_registro, cpu_perc, fk_processo) VALUES (now()," + cpuPer+ ","+str(pid) + ")"
-        cursor.execute(sql)
-        cursor.close()
-    else:    
+    if procExiste:
         pID = str(dados[0])
         cpuPer = str(dados[2])
-        sql = "INSERT INTO Processo (pid, nome, fk_carro)  VALUES ("+str(dados[0])  + ",'" + str(dados[1]) + "', 1)"
+        sql = "INSERT INTO MedidaProcesso (horario_registro,pid, cpu_perc, fk_processo) VALUES (now()," + \
+            pID + "," + cpuPer + ","+str(procExiste[0]) + ")"
         cursor.execute(sql)
-    
-        sql = "INSERT INTO MedidaProcesso (horario_registro, cpu_perc, fk_processo) VALUES (now()," + cpuPer+ ","+str(pid) + ")"
+        cursor.close()
+    else:
+        pID = str(dados[0])
+        cpuPer = str(dados[2])
+        novoNome = str(dados[1])
+
+        print(pID, novoNome, cpuPer)
+        sql = "INSERT INTO Processo (nome, fk_carro)  VALUES ('" + \
+            novoNome + "', 1)"
+        cursor.execute(sql)
+
+        novoId = select(f"select id from Processo where nome = '{dados[1]}';")
+        print("processo id", novoId[0])
+        nID = str(novoId[0])
+
+        sql = "INSERT INTO MedidaProcesso (horario_registro,pid, cpu_perc, fk_processo) VALUES (now()," + \
+            pID + "," + cpuPer + ","+nID + ")"
         cursor.execute(sql)
         cursor.close()
 

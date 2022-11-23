@@ -35,12 +35,12 @@ function dispositivos(idCarro) {
 
 function processo(idCarro) {
     instrucaoSql = `
-    select pid, nome, fk_carro
-    ,cpu_perc, horario_registro
+    select   nome, cpu_perc, horario_registro, fk_carro
     from Processo, MedidaProcesso
-    where Processo.pid = fk_processo and fk_carro = ${idCarro}
-    and  nome <> 'System Idle Process'
-    order by horario_registro desc limit 5 ;`;
+    where Processo.id = fk_processo and fk_carro = ${idCarro}
+    and  nome <> 'System Idle Process' and cpu_perc > 1
+    order by cpu_perc desc;`;
+
     console.log("Executando a instrução SQL: \n" + instrucaoSql);
     return database.executar(instrucaoSql);
 }

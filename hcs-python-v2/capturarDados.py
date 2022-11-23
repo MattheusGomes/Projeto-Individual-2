@@ -80,7 +80,7 @@ def dadosDisco():
         espacoLivreDisco = round((psutil.disk_usage('/')[2]) / (10**9), 2)
         consumoDisco = round((psutil.disk_usage('/')[3]), 2)
         print(f'\033[1mUnidade de Armazenamento: \033[95m{"/:"}\033[0m   \033[1mEspaço Total: \033[95m{armzTotalDisco} Gb\033[0m   \033[1mEspaço Usado: \033[95m{espacoUsadoDisco} Gb\033[0m   \033[1mEspaço Livre: \033[95m{espacoLivreDisco} Gb\033[0m   \033[1mConsumo(%): \033[95m{consumoDisco}%\033[0m')
-
+        insert_disco(str(consumoDisco))
     else:
         for dispositivo in dispositivos:
             """

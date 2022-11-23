@@ -3,6 +3,9 @@ setInterval(() => {
   graficos();
   gerarDados();
 }, 1000);
+setInterval(() => {
+  verProcesso();
+}, 5000);
 
 function verCarro() {
   var idCarro = sessionStorage.ID_Carro;
@@ -100,7 +103,7 @@ function gerarDados() {
           tipoDisp = json[index].tipo;
           horario = json[index].horario_registro;
           valor = json[index].valor;
-          console.log(tipoDisp);
+
           if (tipoDisp == "RAM") {
             valRam.innerHTML = `${valor}%`;
             vtRAM.push(valor);
@@ -347,10 +350,10 @@ function verProcesso() {
         contador = 0;
 
         for (var index = 0; index < json.length; index++) {
-          vtNomeProcessos.push(json[index].nome);
-          vtConsumoProcessos.push(json[index].cpu_perc);
-          vtDataSemFormatacao.push(json[index].horario_registro);
+          nomeProc = json[index].nome;
+          consumo = json[index].cpu_perc;
           vtPidProcessos.push(json[index].pid);
+          vtDataSemFormatacao.push(json[index].horario_registro);
 
           //Separando e formatando data e hora
           var limparData = vtDataSemFormatacao[i].split(".");
@@ -362,6 +365,16 @@ function verProcesso() {
           vtData[i] = vtData[i].split("-").reverse().join("/");
 
           i++;
+          if (!vtNomeProcessos.includes(nomeProc)) {
+            vtNomeProcessos.push(nomeProc);
+            vtConsumoProcessos.push(parseFloat(consumo));
+          } else {
+            for (contador = 0; contador < vtNomeProcessos.length; contador++) {
+              if (vtNomeProcessos[contador] == nomeProc) {
+                vtConsumoProcessos[contador] += parseFloat(consumo);
+              }
+            }
+          }
         }
 
         const data = {
@@ -399,6 +412,7 @@ function verProcesso() {
           data: data,
           options: {
             responsive: false,
+            animation: 0,
             plugins: {
               legend: {
                 position: "top",

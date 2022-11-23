@@ -51,18 +51,21 @@ id_medida INT PRIMARY KEY AUTO_INCREMENT
 );
 
 CREATE TABLE Processo(
-pid int primary key
-,nome varchar(100)
+id INT PRIMARY KEY AUTO_INCREMENT
+,nome varchar(1000)
 ,fk_carro INT, FOREIGN KEY (fk_carro) REFERENCES Carro(id_carro)
 );
 
 CREATE TABLE MedidaProcesso(
 id INT PRIMARY KEY AUTO_INCREMENT
+,pid int
 ,cpu_perc DECIMAL(5,1)
 ,horario_registro DATETIME
-,fk_processo INT, FOREIGN KEY (fk_processo) REFERENCES Processo(pid)
+,fk_processo INT, FOREIGN KEY (fk_processo) REFERENCES Processo(id)
 );
 
+select * from Processo;
+select * from MedidaProcesso;
 /* Cadastrando a empresa HCS e seus respectivos dados*/
 insert into Empresa values (null, 'Hardware Control System', '36.641.878/0001-53');
 
@@ -130,6 +133,7 @@ round(avg(valor),1) as MediaConsumo
 FROM Empresa, Carro, Dispositivo, Medida
 WHERE fk_empresa = id_empresa AND fk_carro = id_carro AND fk_dispositivo = id_dispositivo AND tipo ="RAM" 
 group by Carro.modelo order by MediaConsumo desc limit 5;
+
 select * from vwDashGesRAM;
 CREATE VIEW `vwDashTec` As 
 Select  id_empresa as CodEmpresa,
@@ -150,8 +154,8 @@ select * from Medida;
 
 select * from carro;
 /*Selecionando as tabelas dinâmicas referentes a empresa TESLA*/
-select * from vwDashGesCPU where CodEmpresa = 1;
-select * from vwDashGesRAM where CodEmpresa = 1;
+select * from vwDashGesCPU where CodEmpresa = 2;
+select * from vwDashGesRAM where CodEmpresa = 2;
 
 /*Selecionando as tabelas dinâmicas referentes a empresa HYUNDAI*/
 select * from vwDashGesCPU where CodEmpresa = 2;
@@ -188,13 +192,3 @@ WHERE fk_carro = id_carro AND fk_dispositivo = id_dispositivo AND id_carro = 1 o
     LIMIT 10;
 
 
-
--- futura view de descrição
-SELECT id_carro, endereco_mac, placa_carro, Carro.modelo
-    tipo, id_medida, unid_medida, Medida.horario_registro, Medida.valor AS 'valor',
-    Processo.horario_registro, pid, Processo.nome, Processo.cpu_perc
-    FROM Carro, Dispositivo, Medida, Processo
-    WHERE Dispositivo.fk_carro = id_carro AND Processo.fk_carro = id_carro
-    AND fk_dispositivo = id_dispositivo AND id_carro = 1
-    order by id_medida desc
-    LIMIT 10 ;
