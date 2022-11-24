@@ -154,7 +154,7 @@ function graficoDispRam() {
         var divGrafico = document.getElementById("graficoBarraCpu");
         var canvas = document.createElement("canvas");
         canvas.id = "grafico1";
-
+        canvas.className = "graficoRAM"
         divGrafico.appendChild(canvas);
 
         let labels = [];
@@ -200,7 +200,7 @@ function graficoDispRam() {
           options: {
             maintainAspectRatio: false,
             responsive: false,
-            animation: 0.5,
+            animation: 1,
           },
         };
 
@@ -236,7 +236,7 @@ function graficoDispCpu() {
         var divGrafico = document.getElementById("graficoBarraRAM");
         var canvas = document.createElement("canvas");
         canvas.id = "grafico2";
-
+        canvas.className = "graficoCPU"
         divGrafico.appendChild(canvas);
 
         let labels = [];
@@ -308,7 +308,7 @@ function graficoDispCpu() {
           options: {
             maintainAspectRatio: false,
             responsive: false,
-            animation: 0.1,
+            animation: 1,
           },
         };
 
@@ -345,6 +345,7 @@ function verProcesso() {
         var divGrafico = document.getElementById("graficoPieProcessos");
         var canvas = document.createElement("canvas");
         canvas.id = "grafico3";
+        canvas.className = "graficoPizza";
         divGrafico.appendChild(canvas);
 
         contador = 0;
