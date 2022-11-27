@@ -1,10 +1,9 @@
 setInterval(() => {
   gerarDados();
-  graficos();
-  gerarDados();
+  graficosLine();
 }, 1000);
 setInterval(() => {
-  verProcesso();
+  graficoPie();
 }, 5000);
 
 function verCarro() {
@@ -31,56 +30,6 @@ function verCarro() {
     }
   });
 }
-/* 
-function gerarDados() {
-    var disps
-    var idCarro = sessionStorage.ID_Carro;
-    var vtData = []
-    var vtHorario = []
-    var vtDataSemFormatacao = []
-    var vtNomeProcessos = []
-    var vtPidProcessos = []
-    var vtConsumoProcessos = []
-
-    //Dispositivos
-    var idCarro = sessionStorage.ID_Carro;
-    var vtCPU = []
-    var vtRAM = []
-
-    fetch("/dashTecnico/dispositivos", {
-        method: 'POST',
-        headers: {
-            "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-            idCarro: idCarro
-        })
-    }).then(function (resposta) {
-        if (resposta.ok) {
-
-            resposta.json().then(json => {
-
-                for (var index = json.length - 1; index >= 0; index--) {
-                    tipoDisp = json[index].tipo
-                    horario = json[index].horario_registro
-                    valor = json[index].valor
-
-
-                    if (tipoDisp == "RAM") {
-                        valRam.innerHTML = `${valor}%`
-
-                    } else if (tipoDisp == "CPU") {
-                        valCPU.innerHTML = `${valor}%`
-                    } else {
-                        valDisk.innerHTML = `${valor}%`
-                    }
-                }
-            })
-
-        }
-    })
-}
- */
 
 function gerarDados() {
   var idCarro = sessionStorage.ID_Carro;
@@ -103,15 +52,41 @@ function gerarDados() {
           tipoDisp = json[index].tipo;
           horario = json[index].horario_registro;
           valor = json[index].valor;
+          tip = json[index].unid_medida;
 
           if (tipoDisp == "RAM") {
             valRam.innerHTML = `${valor}%`;
             vtRAM.push(valor);
+
+            if (valor > 0 && valor <= 60) {
+              ram.style = "background: #00FAAC;";
+            } else if (valor > 60 && valor < 80) {
+              ram.style = "background: #FFFF7C;";
+            } else {
+              ram.style = "background: #FF3559;";
+            }
           } else if (tipoDisp == "CPU") {
-            valCPU.innerHTML = `${valor}%`;
-            vtCPU.push(valor);
-          } else {
-            valDisk.innerHTML = `${valor}%`;
+            if (tip == "°C") {
+              valTemp.innerHTML = `${valor}°C`;
+              if (valor > 0 && valor <= 60) {
+                temp.style = "background: #00FAAC;";
+              } else if (valor > 60 && valor < 80) {
+                temp.style = "background: #FFFF7C;";
+              } else {
+                temp.style = "background: #FF3559;";
+              }
+
+            } else if (tip == "%") {
+              valCPU.innerHTML = `${valor}%`;
+              vtCPU.push(valor);
+              if (valor > 0 && valor <= 60) {
+                cpu.style = "background: #00FAAC;";
+              } else if (valor > 60 && valor < 80) {
+                cpu.style = "background: #FFFF7C;";
+              } else {
+                cpu.style = "background: #FF3559;";
+              }
+            }
           }
         }
       });
@@ -151,10 +126,10 @@ function graficoDispRam() {
           valoresRam.push(valor);
         }
         document.getElementById("grafico1").remove();
-        var divGrafico = document.getElementById("graficoBarraCpu");
+        var divGrafico = document.getElementById("graficoBarraRAM");
         var canvas = document.createElement("canvas");
         canvas.id = "grafico1";
-        canvas.className = "graficoRAM"
+        canvas.className = "graficoRAM";
         divGrafico.appendChild(canvas);
 
         let labels = [];
@@ -166,8 +141,8 @@ function graficoDispRam() {
               yAxisID: "y-usoRam",
               label: "Ram(%)",
               lineTension: 0.3,
-              backgroundColor: "rgba(78, 115, 223, 0.5)",
-              borderColor: "rgba(78, 115, 223, 1)",
+              backgroundColor: "#4E72F5",
+              borderColor: "#4E72F5",
               data: [
                 valoresRam[4],
                 valoresRam[3],
@@ -180,7 +155,7 @@ function graficoDispRam() {
           ],
           options: {
             maintainAspectRatio: false,
-            responsive: false,
+            responsive: true,
           },
         };
 
@@ -199,7 +174,7 @@ function graficoDispRam() {
           data: dados,
           options: {
             maintainAspectRatio: false,
-            responsive: false,
+            responsive: true,
             animation: 1,
           },
         };
@@ -233,10 +208,10 @@ function graficoDispCpu() {
         i = 0;
 
         document.getElementById("grafico2").remove();
-        var divGrafico = document.getElementById("graficoBarraRAM");
+        var divGrafico = document.getElementById("graficoBarraCpu");
         var canvas = document.createElement("canvas");
         canvas.id = "grafico2";
-        canvas.className = "graficoCPU"
+        canvas.className = "graficoCPU";
         divGrafico.appendChild(canvas);
 
         let labels = [];
@@ -298,7 +273,7 @@ function graficoDispCpu() {
           ],
           options: {
             maintainAspectRatio: false,
-            responsive: false,
+            responsive: true,
           },
         };
 
@@ -366,6 +341,7 @@ function verProcesso() {
           vtData[i] = vtData[i].split("-").reverse().join("/");
 
           i++;
+
           if (!vtNomeProcessos.includes(nomeProc)) {
             vtNomeProcessos.push(nomeProc);
             vtConsumoProcessos.push(parseFloat(consumo));
@@ -377,6 +353,7 @@ function verProcesso() {
             }
           }
         }
+        
 
         const data = {
           labels: [
@@ -390,11 +367,11 @@ function verProcesso() {
             {
               label: "Uso CPU(%)",
               backgroundColor: [
-                "#06D6A0",
-                "#B84A62",
-                "#0378b4",
-                "#F34CA1",
-                "#B62D11",
+                "#00CBFF",
+                "#FF8A57",
+                "#FB5AE8",
+                "#4EFDCC",
+                "#FFFEA6",
               ],
               borderColor: "none",
               data: [
@@ -416,7 +393,7 @@ function verProcesso() {
             animation: 0,
             plugins: {
               legend: {
-                position: "top",
+                position: "right",
               },
               title: {
                 display: true,
@@ -432,7 +409,78 @@ function verProcesso() {
   });
 }
 
-function graficos() {
+function verDisco() {
+  var idCarro = sessionStorage.ID_Carro;
+  vtDadosDisco = [];
+  fetch("/dashTecnico/dadosDisco", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      idCarro: idCarro,
+    }),
+  }).then(function (resposta) {
+    if (resposta.ok) {
+      resposta.json().then((json) => {
+        json = json.reverse();
+        var i = 0;
+
+        document.getElementById("grafico4").remove();
+        var divGrafico = document.getElementById("graficoPieCpu");
+        var canvas = document.createElement("canvas");
+        canvas.id = "grafico4";
+        canvas.className = "graficoPizzaCPU";
+        divGrafico.appendChild(canvas);
+
+        for (var index = 0; index < json.length; index++) {
+          valorUso = json[index].valor;
+          medida = json[index].unid_medida;
+
+          vtDadosDisco.push(valorUso);
+        }
+
+        const data = {
+          labels: ["Uso", "Total"],
+          datasets: [
+            {
+              label: "Uso Disco",
+              backgroundColor: ["#F000E8", "#11CEF0"],
+              borderColor: "none",
+              data: [vtDadosDisco[0], 1000],
+            },
+          ],
+        };
+
+        const config = {
+          type: "pie",
+          data: data,
+          options: {
+            responsive: false,
+            animation: 1,
+            plugins: {
+              legend: {
+                position: "right",
+              },
+              title: {
+                display: true,
+                text: "Disco",
+              },
+            },
+          },
+        };
+
+        let myChartCpu = new Chart(document.getElementById("grafico4"), config);
+      });
+    }
+  });
+}
+
+function graficosLine() {
   graficoDispRam();
   graficoDispCpu();
+}
+function graficoPie() {
+  verProcesso();
+  verDisco();
 }

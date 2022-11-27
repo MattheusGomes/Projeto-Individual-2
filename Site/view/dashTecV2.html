@@ -12,12 +12,13 @@
     />
     <link href="assets/img/hcs.ico" type="image/x-icon" rel="icon" />
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="css/style.css" />
     <link rel="stylesheet" href="css/dashTEC.css" />
     <link rel="stylesheet" href="css/detalheTec.css" />
     <title>Carro</title>
   </head>
 
-  <body onload="verCarro(), verProcesso()">
+  <body onload="verCarro(), graficosLine(), graficoPie()">
     <div class="header">
       <h3>Técnica</h3>
       <a href="index.html">
@@ -31,62 +32,80 @@
     <div class="titulo">
       <h2>Monitoramento</h2>
     </div>
+    <div class="corpo">
+      <div class="menu">
+        <div class="tituloCarro">
+          <h2>Carro</h2>
+        </div>
+        <div class="infoCarro">
+          <div class="tipoCarro">
+            <img
+              class="imgCard"
+              src="https://cdn-icons-png.flaticon.com/512/68/68321.png"
+              alt=""
+            />
+            <div class="info">
+              <span id="modelo">Model S </span>
 
-    <div class="infoCarro">
-      <div class="tipoCarro">
-        <img
-          class="imgCard"
-          src="https://cdn-icons-png.flaticon.com/512/68/68321.png"
-          alt=""
-        />
-        <div class="info">
-          <span id="placaCarro">123</span>
-          <span id="modelo">Model S</span>
+              <span id="placaCarro">AWG6731</span>
+            </div>
+          </div>
+          <div class="tipoComponente" id="cpu">
+            <img
+              class="imgCard"
+              src="https://img.freepik.com/free-icon/cpu_318-932062.jpg?w=2000"
+              alt=""
+            />
+            <span class="valorComp" id="valCPU">Uso%</span>
+          </div>
+          <div class="tipoComponente" id="ram">
+            <img
+              class="imgCard"
+              src="https://www.freeiconspng.com/uploads/ram-icon-png-11.png"
+              alt=""
+            />
+            <span class="valorComp" id="valRam">Uso%</span>
+          </div>
+
+          <div class="tipoComponente" id="temp">
+            <img
+              class="imgCard"
+              src="https://cdn-icons-png.flaticon.com/512/4158/4158502.png"
+              alt=""
+            />
+            <span class="valorComp" id="valTemp">temp%</span>
+          </div>
         </div>
       </div>
-      <div class="tipoCarro">
-        <img
-          class="imgCard"
-          src="https://img.freepik.com/free-icon/cpu_318-932062.jpg?w=2000"
-          alt=""
-        />
-        <span class="valorComp" id="valCPU">Uso%</span>
-      </div>
-      <div class="tipoCarro">
-        <img
-          class="imgCard"
-          src="https://www.freeiconspng.com/uploads/ram-icon-png-11.png"
-          alt=""
-        />
-        <span class="valorComp" id="valRam">Uso%</span>
-      </div>
 
-      <div class="tipoCarro">
-        <img
-          class="imgCard"
-          src="https://cdn-icons-png.flaticon.com/512/173/173697.png"
-          alt=""
-        />
-        <span class="valorComp" id="valDisk">Uso%</span>
-      </div>
-    </div>
+      <!-- corpo -->
 
+      <div class="graficos">
+        <div class="grafLinhas">
+          <div class="grafico1">
+            <div class="graficoBarraRAM" id="graficoBarraRAM">
+              <canvas id="grafico1" class="graficoRAM"></canvas>
+            </div>
+          </div>
 
-    <div class="graficos">
-      <div class="grafico1">
-        <div class="graficoBarraCpu" id="graficoBarraCpu">
-          <canvas id="grafico1"></canvas>
+          <div class="grafico2">
+            <div class="graficoBarraCpu" id="graficoBarraCpu">
+              <canvas id="grafico2" class="graficoCPU"></canvas>
+            </div>
+          </div>
         </div>
-      </div>
 
-      <div class="grafico2">
-        <div class="graficoBarraRAM" id="graficoBarraRAM">
-          <canvas id="grafico2"></canvas>
-        </div>
-      </div>
-      <div class="grafico3">
-        <div class="graficoPieProcessos" id="graficoPieProcessos">
-          <canvas id="grafico3"></canvas>
+        <div class="grafPiz">
+          <div class="grafico3">
+            <div class="graficoPieProcessos" id="graficoPieProcessos">
+              <canvas id="grafico3" class="graficoPizza"></canvas>
+            </div>
+          </div>
+          <div class="grafico4">
+            <div class="graficoPieCpu" id="graficoPieCpu">
+              <canvas id="grafico4" class="graficoPizzaCPU"></canvas>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -95,4 +114,7 @@
 
 <script src="js/dashTEC.js"></script>
 <script src="js/detalhesTEC.js"></script>
+<!-- Graficos -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.anychart.com/releases/v8/js/anychart-base.min.js"></script>
+<script src="https://cdn.anychart.com/releases/v8/js/anychart-tag-cloud.min.js"></script>

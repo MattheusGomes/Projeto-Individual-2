@@ -35,6 +35,11 @@ router.post("/dadosCpu", function (req, res) {
     dashTecnicoController.pegarCpu(req, res);
 });
 
+router.post("/dadosDisco", function (req, res) {
+    console.log('Cheguei na rota!')
+    dashTecnicoController.pegarDisco(req, res);
+});
+
 
 
 module.exports = router;

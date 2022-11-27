@@ -102,7 +102,7 @@
           </div>
           <div class="grafico4">
             <div class="graficoPieCpu" id="graficoPieCpu">
-              <canvas id="grafico4" class="graficoPizzaCpu"></canvas>
+              <div id="cloud" style="width: 100%; height: 40vh"></div>
             </div>
           </div>
         </div>
@@ -114,6 +114,8 @@
 <!-- <script src="js/dashTEC.js"></script>
 <script src="js/detalhesTEC.js"></script> -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.anychart.com/releases/v8/js/anychart-base.min.js"></script>
+<script src="https://cdn.anychart.com/releases/v8/js/anychart-tag-cloud.min.js"></script>
 <script>
   function graficoDispRam() {
     document.getElementById("grafico1").remove();
@@ -249,48 +251,28 @@
 
     let myChartCpu = new Chart(document.getElementById("grafico3"), config);
   }
-  function verCPU() {
-    document.getElementById("grafico4").remove();
-    var divGrafico = document.getElementById("graficoPieCpu");
-    var canvas = document.createElement("canvas");
-    canvas.id = "grafico4";
-    canvas.className = "graficoPizzaCpu";
-    divGrafico.appendChild(canvas);
 
-    const data = {
-      labels: ["Livre", "Total"],
-      datasets: [
-        {
-          label: ["Livre", "Total"],
-          backgroundColor: ["#0378b4", "#F34CA1"],
-          borderColor: "none",
-          data: [15, 30],
-        },
-      ],
-    };
+  function clou() {
+    anychart.onDocumentReady(function () {
+      var data = [
+        { x: "learning", value: 80 },
+        { x: "includes", value: 56 },
+        { x: "lists", value: 44 },
+        { x: "meaning", value: 40 },
+        { x: "useful", value: 36 },
+        { x: "different", value: 32 },
+      ];
 
-    const config = {
-      type: "pie",
-      data: data,
-      options: {
-        responsive: false,
-        animation: 0,
-        plugins: {
-          legend: {
-            position: "right",
-          },
-          title: {
-            display: true,
-            text: "Disco",
-          },
-        },
-      },
-    };
-
-    let myChartCpu = new Chart(document.getElementById("grafico4"), config);
+      // create a chart and set the data
+      chart = anychart.tagCloud(data);
+      // set the container id
+      chart.container("cloud");
+      // initiate drawing the chart
+      chart.draw();
+    });
   }
 
   function gerarGraf() {
-    verProcesso(), graficoDispCpu(), graficoDispRam(), verCPU();
+    verProcesso(), graficoDispCpu(), graficoDispRam(), clou();
   }
 </script>
