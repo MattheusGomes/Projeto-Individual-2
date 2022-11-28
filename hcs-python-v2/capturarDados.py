@@ -3,15 +3,17 @@ import psutil
 import datetime
 import os
 from conexao import criar_conexao_teste
-from sql_comandos import insert_dados, insert_cpu,insert_ram, insert_disco, insert_proc
-#crawler
+from sql_comandos import insert_dados, insert_cpu, insert_ram, insert_disco, insert_proc
+# crawler
 from urllib3 import PoolManager
 from json import loads
 
 limpar = 'clear' if platform.system() == 'Linux' else 'cls'
 
+
 def conversor(valor):
     return float(valor[0:4].replace(",", '.'))
+
 
 def dadosCPU():
     dadosCPU = []
@@ -36,7 +38,7 @@ def dadosCPU():
 
     elif platform.system() != 'Linux' and crawler:
         with PoolManager() as pool:
-            
+
             response = pool.request('GET', 'http://localhost:8085/data.json')
             data = loads(response.data.decode('utf-8'))
             temp_value = data['Children'][0]['Children'][1]['Children'][1]['Children'][2]['Value']
@@ -49,7 +51,7 @@ def dadosCPU():
             print(f'\033[1mConsumo(%): \033[94m{consumoCPU}%\033[0m      \033[1mTemperatura: \033[94m{tempCPU}\033[0m     \033[1mNúcleos: \033[94m{nucleos}\033[0m      \033[1mProcessadores Lógicos: \033[94m{processadoresLogicos}\033[0m      \033[1mThreads: \033[94m{threads}\033[0m')
             print('=-='*43)
 
-    else: 
+    else:
 
         print('=-='*43)
         print('\033[1mDADOS DE CPU (PROCESSADOR)\033[0m\n')
@@ -80,29 +82,19 @@ def dadosDisco():
         espacoLivreDisco = round((psutil.disk_usage('/')[2]) / (10**9), 2)
         consumoDisco = round((psutil.disk_usage('/')[3]), 2)
         print(f'\033[1mUnidade de Armazenamento: \033[95m{"/:"}\033[0m   \033[1mEspaço Total: \033[95m{armzTotalDisco} Gb\033[0m   \033[1mEspaço Usado: \033[95m{espacoUsadoDisco} Gb\033[0m   \033[1mEspaço Livre: \033[95m{espacoLivreDisco} Gb\033[0m   \033[1mConsumo(%): \033[95m{consumoDisco}%\033[0m')
-        insert_disco(str(consumoDisco))
+        insert_disco(str(consumoDisco), str(armzTotalDisco))
     else:
         for dispositivo in dispositivos:
-            """
-            armzTotalDisco = round(
-                (psutil.disk_usage(f'{dispositivo.device}/')[0]) / (10**9),2);
-            espacoUsadoDisco = round(
-                (psutil.disk_usage(f'{dispositivo.device}/')[1]) / (10**9),2);
-            espacoLivreDisco = round(
-                (psutil.disk_usage(f'{dispositivo.device}/')[2]) / (10**9),2);
-            consumoDisco = round(
-                (psutil.disk_usage(f'{dispositivo.device}')[3]),2);
-            """
+
             armzTotalDisco = round((psutil.disk_usage('/')[0]) / (10**9), 2)
             espacoUsadoDisco = round((psutil.disk_usage('/')[1]) / (10**9), 2)
             espacoLivreDisco = round((psutil.disk_usage('/')[2]) / (10**9), 2)
             consumoDisco = round((psutil.disk_usage('/')[3]), 2)
 
-            insert_disco(str(consumoDisco))
+            insert_disco(str(consumoDisco), str(armzTotalDisco))
 
             print(f'\033[1mUnidade de Armazenamento: \033[95m{dispositivo.device}\033[0m   \033[1mEspaço Total: \033[95m{armzTotalDisco} Gb\033[0m   \033[1mEspaço Usado: \033[95m{espacoUsadoDisco} Gb\033[0m   \033[1mEspaço Livre: \033[95m{espacoLivreDisco} Gb\033[0m   \033[1mConsumo(%): \033[95m{consumoDisco}%\033[0m')
     print('=-='*43)
-
 
 
 def exibir():
@@ -116,11 +108,12 @@ def processos():
     process_lista = []
     while True:
         for proc in psutil.process_iter():
-            cpu_percent = proc.cpu_percent(interval = 1)
-            exibir() 
+            cpu_percent = proc.cpu_percent(interval=1)
+            exibir()
             horario = datetime.datetime.fromtimestamp(
                 proc.create_time()).strftime("%d-%m-%Y %H:%M")
-            info = proc.as_dict(attrs=['pid', 'name', 'cpu_percent', 'create_time'])
+            info = proc.as_dict(
+                attrs=['pid', 'name', 'cpu_percent', 'create_time'])
             info['cpu_percent'] = round(cpu_percent / psutil.cpu_count(), 1)
             info['create_time'] = horario
 
@@ -129,12 +122,13 @@ def processos():
                 dados = info['pid'], info['name'], info['cpu_percent']
                 insert_proc(dados)
 
-
             print('\033[1mPROCESSOS\033[0m\n')
-            
+
             for i in process_lista:
                 prossID = i['pid']
                 processo = i['name']
                 cpu = i['cpu_percent']
                 hor = i['create_time']
-                print(f'\033[1mPID: \033[95m{prossID}\033[0m \033[1mProcesso: \033[95m{processo}\033[0m \033[1mConsumo CPU(%): \033[95m{cpu}%\033[0m \033[1mHorario: \033[95m{hor}\033[0m')
+                print(
+                    f'\033[1mPID: \033[95m{prossID}\033[0m \033[1mProcesso: \033[95m{processo}\033[0m \033[1mConsumo CPU(%): \033[95m{cpu}%\033[0m \033[1mHorario: \033[95m{hor}\033[0m')
+

@@ -8,9 +8,11 @@ function carrosMonitorados(idEmpresa) {
 }
 function verCarrosProblema(idEmpresa) {
   instrucaoSql = `
-    SELECT * from vwDashTec WHERE CodEmpresa = ${idEmpresa} ORDER BY Valor desc;`;
+    SELECT * from vwDashTec WHERE CodEmpresa = ${idEmpresa} and Componente != 'DISCO'
+    
+    ORDER BY Valor desc limit 100;`;
   console.log("Executando a instrução SQL: \n" + instrucaoSql);
-  return database.executar(instrucaoSql);
+  return database.executar(instrucaoSql); 
 }
 
 function verDetalhes(idCarro) {
@@ -36,7 +38,7 @@ function processo(idCarro) {
   instrucaoSql = `
     select   nome, cpu_perc, horario_registro, fk_carro
     from Processo, MedidaProcesso
-    where Processo.pid = fk_processo and fk_carro = ${idCarro}
+    where Processo.id = fk_processo and fk_carro = ${idCarro}
     and  nome <> 'System Idle Process' 
     order by cpu_perc desc;`;
 

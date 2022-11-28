@@ -1,6 +1,6 @@
 setInterval(() => {
-  gerarDados();
   graficosLine();
+  gerarDados();
 }, 1000);
 setInterval(() => {
   graficoPie();
@@ -8,6 +8,8 @@ setInterval(() => {
 
 function verCarro() {
   var idCarro = sessionStorage.ID_Carro;
+  
+  console.log(idCarro)
   fetch("/dashTecnico/verDetalhes", {
     method: "POST",
     headers: {
@@ -24,7 +26,7 @@ function verCarro() {
           placa = json[index].placa_carro;
           modelo = json[index].modelo;
           placaCarro.innerHTML = `${placa}`;
-          modelo.innerHTML = `${modelo}`;
+          modeloCarro.innerHTML = `${modelo}`;
         }
       });
     }
@@ -412,6 +414,7 @@ function verProcesso() {
 function verDisco() {
   var idCarro = sessionStorage.ID_Carro;
   vtDadosDisco = [];
+  vtTotalDisco = [];
   fetch("/dashTecnico/dadosDisco", {
     method: "POST",
     headers: {
@@ -437,9 +440,14 @@ function verDisco() {
           valorUso = json[index].valor;
           medida = json[index].unid_medida;
 
-          vtDadosDisco.push(valorUso);
+          if(medida == '%'){
+            vtDadosDisco.push(valorUso);
+          }else {
+            vtTotalDisco.push(valorUso);
+          }
         }
-
+        
+        tamanho = vtTotalDisco.length
         const data = {
           labels: ["Uso", "Total"],
           datasets: [
@@ -447,7 +455,7 @@ function verDisco() {
               label: "Uso Disco",
               backgroundColor: ["#F000E8", "#11CEF0"],
               borderColor: "none",
-              data: [vtDadosDisco[0], 1000],
+              data: [vtDadosDisco[tamanho - 1], vtTotalDisco[tamanho - 1]],
             },
           ],
         };

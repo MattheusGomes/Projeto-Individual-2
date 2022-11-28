@@ -27,9 +27,10 @@ function monitorados() {
 
 function verCarros() {
   var idEmpresa = sessionStorage.ID_EMPRESA;
+  var carrosMonitorados = [];
+  var posicaoCarro = [];
   estadoRam = "";
   estadoCpu = "";
-  var carrosMonitorados = [];
   fetch("/dashTecnico/verCarros", {
     method: "POST",
     headers: {
@@ -46,38 +47,47 @@ function verCarros() {
         numDiv = 1;
         for (var index = 0; index < json.length; index++) {
           idCarro = json[index].IdCarro;
+          problema = json[index].Componente;
+          Valor = json[index].Valor;
+
+          if (!carrosMonitorados.includes(idCarro)) {
+            if (problema == "RAM") {
+              if (Valor >= 70 && Valor < 90) {
+                estadoRam = "Alerta";
+                carrosMonitorados.push(idCarro);
+                posicaoCarro.push(index)
+              } else if (Valor > 90) {
+                estadoRam = "Critico";
+                carrosMonitorados.push(idCarro);
+                posicaoCarro.push(index)
+                critico++;
+              }
+            } else if (problema == "CPU") {
+              if (Valor >= 70 && Valor < 90) {
+                estadoCpu = "Alerta";
+                carrosMonitorados.push(idCarro);
+                posicaoCarro.push(index)
+              } else if (Valor > 90) {
+                estadoCpu = "Critico";
+                carrosMonitorados.push(idCarro);
+                posicaoCarro.push(index)
+                critico++;
+              }
+            }
+          }
+          carrosCriticos.innerHTML = critico;
+        }
+        console.log(carrosMonitorados);
+        for (var index = 0; index < json.length; index++) {
+          idCarro = json[index].IdCarro;
           modelo = json[index].Modelo;
           placa = json[index].Placa;
           problema = json[index].Componente;
           Valor = json[index].Valor;
 
-          sessionStorage.ID_Carro = json[index].IdCarro;
-
-          if (!carrosMonitorados.includes(idCarro)) {
-            carrosMonitorados.push(idCarro);
-
-            if (problema == "RAM") {
-              if (Valor >= 80 && Valor < 90) {
-                estadoRam = "Alerta";
-              } else if (Valor > 90) {
-                estadoRam = "Critico";
-                critico++;
-              } else {
-                estadoRam = "Normal";
-              }
-            } else if (problema == "CPU") {
-              if (Valor >= 70 && Valor < 90) {
-                estadoCpu = "Alerta";
-              } else if (Valor > 90) {
-                estadoCpu = "Critico";
-                critico++;
-              } else {
-                estadoCpu = "Normal";
-              }
-            }
-
+          if (posicaoCarro.includes(index)) {
             if (problema == "RAM" && Valor > 40.0) {
-              cardCarros.innerHTML += `<div onclick="detalhes()" class="carro carro${numDiv}">
+              cardCarros.innerHTML += `<div onclick="detalhes(${idCarro})" class="carro carro${numDiv}">
                                     <ul class="ulTitulo" >
                                     <li>Placa</li>
                                     <li>Modelo</li>
@@ -87,12 +97,11 @@ function verCarros() {
                                 <ul class="ulDescricao">
                                     <div class="placaCarro">${placa}</div>
                                     <div class="modeloCarro">${modelo}</div>
-                                    <div class="itemComProblema">${problema} -${Valor}%</div>
+                                    <div class="itemComProblema">${problema} ${Valor}%</div>
                                     <div class="estadoCarro">${estadoRam}</div>
                                 </ul>
                             </div>`;
-            }
-            if (problema == "CPU" && Valor > 40.0) {
+            } else if (problema == "CPU" && Valor > 40.0) {
               cardCarros.innerHTML += `<div onclick="detalhes(${idCarro})" class="carro carro${numDiv}">
                                 <ul class="ulTitulo" >
                                     <li>Placa</li>
@@ -103,12 +112,11 @@ function verCarros() {
                                 <ul class="ulDescricao">
                                 <div class="placaCarro">${placa}</div>
                                 <div class="modeloCarro">${modelo}</div>
-                                <div class="itemComProblema">${problema} - ${Valor}%</div>
+                                <div class="itemComProblema">${problema} ${Valor}%</div>
                                 <div class="estadoCarro">${estadoRam}</div>
                                 </ul>
                             </div>`;
             }
-            carrosCriticos.innerHTML = critico;
 
             if (numDiv == 1) {
               numDiv = 2;
@@ -122,6 +130,8 @@ function verCarros() {
   });
 }
 
-function detalhes() {
+function detalhes(id) {
+  
+  sessionStorage.ID_Carro = id;
   window.location = "./dashTecV2.html";
 }

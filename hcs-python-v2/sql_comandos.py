@@ -1,77 +1,6 @@
 from conexao import criar_conexao_local, criar_conexao_teste
 import mysql.connector
-
-
-def insert_dados(dados):
-    con = criar_conexao_teste("localhost", "root", "matheus", "teste")
-    cursor = con.cursor()
-    sql = "INSERT INTO testeTable (horario, cpu_perc, ram_perc, disco_perc, proc_nome, proc_cpu_uso) values (now(), %s, %s ,%s, %s, %s)"
-    cursor.execute(sql, dados)
-    cursor.close()
-
-
-def insert_cpu(consumo, temperatura):
-    con = criar_conexao_local()
-    cursor = con.cursor()
-    sql = "INSERT INTO Medida (horario_registro, fk_dispositivo, valor) VALUES (now(), 5," + consumo + ")"
-    cursor.execute(sql)
-    sql = "INSERT INTO Medida (horario_registro, fk_dispositivo, valor) VALUES (now(), 6," + temperatura + ")"
-    cursor.execute(sql)
-    cursor.close()
-
-
-def insert_ram(consumo):
-    con = criar_conexao_local()
-    cursor = con.cursor()
-    sql = "INSERT INTO Medida (horario_registro, fk_dispositivo, valor) VALUES (now(), 7," + consumo + ")"
-    cursor.execute(sql)
-    cursor.close()
-
-
-def insert_disco(consumo):
-    con = criar_conexao_local()
-    cursor = con.cursor()
-    sql = "INSERT INTO Medida (horario_registro, fk_dispositivo, valor) VALUES (now(), 8," + consumo + ")"
-    cursor.execute(sql)
-    cursor.close()
-
-
-def insert_proc(dados):
-    con = criar_conexao_local()
-    cursor = con.cursor()
-
-    procExiste = select(f"select id from Processo where nome = '{dados[1]}';")
-    pID = dados[0]
-
-    if procExiste:
-        pID = str(dados[0])
-        cpuPer = str(dados[2])
-        sql = "INSERT INTO MedidaProcesso (horario_registro,pid, cpu_perc, fk_processo) VALUES (now()," + \
-            pID + "," + cpuPer + ","+str(procExiste[0]) + ")"
-        cursor.execute(sql)
-        cursor.close()
-    else:
-        pID = str(dados[0])
-        cpuPer = str(dados[2])
-        novoNome = str(dados[1])
-
-        print(pID, novoNome, cpuPer)
-        sql = "INSERT INTO Processo (nome, fk_carro)  VALUES ('" + \
-            novoNome + "', 1)"
-        cursor.execute(sql)
-
-        novoId = select(f"select id from Processo where nome = '{dados[1]}';")
-        print("processo id", novoId[0])
-        nID = str(novoId[0])
-
-        sql = "INSERT INTO MedidaProcesso (horario_registro,pid, cpu_perc, fk_processo) VALUES (now()," + \
-            pID + "," + cpuPer + ","+nID + ")"
-        cursor.execute(sql)
-        cursor.close()
-
-    #sql = "INSERT INTO Processo (horario_registro, pid, nome, cpu_perc, fk_carro) VALUES (now(), %s, %s, %s, 1)"
-    #cursor.execute(sql, dados)
-    # cursor.close()
+import getmac
 
 
 def select(query):
@@ -89,3 +18,96 @@ def select(query):
             cursor.close()
             conexao.close()
             return dados
+
+
+enderecoMac = getmac.get_mac_address()
+idCarro = select("select id_carro from Carro where endereco_mac = '" +
+                 enderecoMac + "' ;")
+
+
+def insert_dados(dados):
+    con = criar_conexao_teste("localhost", "root", "matheus", "teste")
+    cursor = con.cursor()
+    sql = "INSERT INTO testeTable (horario, cpu_perc, ram_perc, disco_perc, proc_nome, proc_cpu_uso) values (now(), %s, %s ,%s, %s, %s)"
+    cursor.execute(sql, dados)
+    cursor.close()
+
+
+def insert_cpu(consumo, temperatura):
+    con = criar_conexao_local()
+    cursor = con.cursor()
+
+    dispConsumo = select("select id_dispositivo from dispositivo, Carro where fk_carro = id_carro and id_carro =" +
+                         str(idCarro[0]) + " and tipo = 'CPU' and unid_medida = '%';")
+    dispTemp = select("select id_dispositivo from dispositivo, Carro where fk_carro = id_carro and id_carro =" +
+                      str(idCarro[0]) + " and tipo = 'CPU' and unid_medida = '°C';")
+
+    dConsumo = str(dispConsumo[0])
+    dTemp = str(dispTemp[0])
+
+    sql = f"INSERT INTO Medida (horario_registro, fk_dispositivo, valor) VALUES (now(), {dConsumo}, {consumo})"
+    cursor.execute(sql)
+    sql = f"INSERT INTO Medida (horario_registro, fk_dispositivo, valor) VALUES (now(), {dTemp}, {temperatura})"
+    cursor.execute(sql)
+    cursor.close()
+
+
+def insert_ram(consumo):
+
+    idDispositivo = select(
+        "select id_dispositivo from dispositivo, Carro where fk_carro = id_carro and id_carro =" + str(idCarro[0]) + " and tipo = 'RAM';")
+
+    con = criar_conexao_local()
+    cursor = con.cursor()
+    sql = f"INSERT INTO Medida (horario_registro, fk_dispositivo, valor) VALUES (now(), {idDispositivo[0]}, {consumo})"
+    cursor.execute(sql)
+    cursor.close()
+
+
+def insert_disco(consumo, total):
+    idDisco1 = select("select id_dispositivo from dispositivo, Carro where fk_carro = id_carro and id_carro =" +
+                      str(idCarro[0]) + " and tipo = 'DISCO' and unid_medida = '%';")
+    idDisco2 = select("select id_dispositivo from dispositivo, Carro where fk_carro = id_carro and id_carro =" +
+                      str(idCarro[0]) + " and tipo = 'DISCO' and unid_medida = 'T';")
+
+    con = criar_conexao_local()
+    cursor = con.cursor()
+    sql = f"INSERT INTO Medida (horario_registro, fk_dispositivo, valor) VALUES (now(), {idDisco1[0]}, {consumo})"
+    cursor.execute(sql)
+
+    sql = f"INSERT INTO Medida (horario_registro, fk_dispositivo, valor) VALUES (now(), {idDisco2[0]}, {total})"
+    cursor.execute(sql)
+    cursor.close()
+
+
+def insert_proc(dados):
+    con = criar_conexao_local()
+    cursor = con.cursor()
+
+    procExiste = select(
+        f"select id from Processo where pid = {dados[0]} and nome = '{dados[1]}' and fk_carro = {idCarro[0]};")
+    idP = procExiste
+    print(idP)
+
+    if procExiste:
+        cpuPer = str(dados[2])
+        sql = f"INSERT INTO MedidaProcesso (horario_registro, cpu_perc, fk_processo) VALUES (now(), {cpuPer}, {idP[0]})"
+        cursor.execute(sql)
+        cursor.close()
+
+    else:
+        pID = str(dados[0])
+        cpuPer = str(dados[2])
+        novoNome = str(dados[1])
+        print(pID, novoNome, cpuPer)
+
+        sql = f"INSERT INTO Processo (pid, nome, fk_carro) VALUES ({pID}, '{novoNome}', {idCarro[0]})"
+        cursor.execute(sql)
+
+        idP = select(
+            f"select id from Processo where pid = {pID} and fk_carro = {idCarro[0]} ;")
+        print(idP)
+
+        sql = f"INSERT INTO MedidaProcesso (horario_registro, cpu_perc, fk_processo) VALUES (now(), {cpuPer}, {idP[0]})"
+        cursor.execute(sql)
+        cursor.close()
