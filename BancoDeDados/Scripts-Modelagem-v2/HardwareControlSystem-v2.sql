@@ -52,13 +52,13 @@ id_medida INT PRIMARY KEY AUTO_INCREMENT
 
 CREATE TABLE Processo(
 id INT PRIMARY KEY AUTO_INCREMENT
+,pid INT
 ,nome varchar(1000)
 ,fk_carro INT, FOREIGN KEY (fk_carro) REFERENCES Carro(id_carro)
 );
 
 CREATE TABLE MedidaProcesso(
 id INT PRIMARY KEY AUTO_INCREMENT
-,pid int
 ,cpu_perc DECIMAL(5,1)
 ,horario_registro DATETIME
 ,fk_processo INT, FOREIGN KEY (fk_processo) REFERENCES Processo(id)
@@ -77,6 +77,7 @@ insert into Dispositivo values (null, 'CPU', 'Intel Xeon - 2 vCpu ', '%', null, 
 insert into Dispositivo values (null, 'CPU', 'Intel Xeon - 2 vCpu ', '°C', null, 1);
 insert into Dispositivo values (null, 'RAM', 'Kingston 8GB', '%', null, 1); 
 insert into Dispositivo values (null, 'DISCO', 'Toshiba 20Gb', '%', null, 1); 
+insert into Dispositivo values (null, 'DISCO', 'Toshiba 20Gb', 'T', null, 1); 
 
 
 /*DADOS DA TESLA*/
@@ -90,13 +91,14 @@ insert into Dispositivo values (null, 'CPU', 'Intel i5 7400', '%', 1, null);
 insert into Dispositivo values (null, 'CPU', 'Intel i5 7400', '°C', 1, null);
 insert into Dispositivo values (null, 'RAM', 'Corsair 16GB, 2133Mhz, DDR4', '%', 1, null);
 insert into Dispositivo values (null, 'DISCO', 'Toshiba 50Gb', '%', 1, null); 
+insert into Dispositivo values (null, 'DISCO', 'Toshiba 50Gb', 'T', 1, null); 
 
 insert into Carro values (null, '87-93-87-EF-B1-0B', 'CDE1234', 'Model X', 2);
 insert into Dispositivo values (null, 'CPU', 'Intel i5 10500H', '%', 2, null);
 insert into Dispositivo values (null, 'CPU', 'Intel i5 7400', '°C', 2, null);
 insert into Dispositivo values (null, 'RAM', 'Corsair 16GB, 2133Mhz, DDR4', '%', 2, null);
 insert into Dispositivo values (null, 'DISCO', 'Toshiba 50Gb', '%', 2, null); 
-
+insert into Dispositivo values (null, 'DISCO', 'Toshiba 50Gb', 'T', 2, null); 
 
 
 
@@ -110,7 +112,17 @@ insert into Dispositivo values (null, 'CPU', 'Intel i5 7400', '%', 3, null);
 insert into Dispositivo values (null, 'CPU', 'Intel i5 7400', '°C', 3, null); 
 insert into Dispositivo values (null, 'RAM', 'Kingston 8GB', '%', 3, null);
 insert into Dispositivo values (null, 'DISCO', 'Toshiba 50Gb', '%', 3, null); 
+insert into Dispositivo values (null, 'DISCO', 'Toshiba 50Gb', 'T', 3, null); 
 
+
+
+
+insert into Carro values (null, 'f4:ce:23:d8:ba:30', 'CDE1234', 'Model X', 2);
+insert into Dispositivo values (null, 'CPU', 'Intel i5 10500H', '%', 4, null);
+insert into Dispositivo values (null, 'CPU', 'Intel i5 7400', '°C', 4, null);
+insert into Dispositivo values (null, 'RAM', 'Corsair 16GB, 2133Mhz, DDR4', '%', 4, null);
+insert into Dispositivo values (null, 'DISCO', 'Toshiba 50Gb', '%', 4, null); 
+insert into Dispositivo values (null, 'DISCO', 'Toshiba 50Gb', 'T', 4, null); 
 
 
 
@@ -135,8 +147,10 @@ WHERE fk_empresa = id_empresa AND fk_carro = id_carro AND fk_dispositivo = id_di
 group by Carro.modelo order by MediaConsumo desc limit 5;
 
 select * from vwDashGesRAM;
+
 CREATE VIEW `vwDashTec` As 
 Select  id_empresa as CodEmpresa,
+id_medida,
 Carro.id_carro AS 'IdCarro',
 Carro.modelo AS 'Modelo',
 Carro.placa_carro AS 'Placa',
@@ -144,11 +158,9 @@ Medida.valor as 'Valor',
 tipo as 'Componente',
 unid_medida as 'UnidadeMedida' 
 FROM Empresa, Carro, Dispositivo, Medida
-WHERE fk_empresa = id_empresa AND fk_carro = id_carro AND fk_dispositivo = id_dispositivo
-GROUP BY id_empresa,Medida.valor,unid_medida, Carro.id_carro,Carro.modelo,Carro.placa_carro,tipo ;
+WHERE fk_empresa = id_empresa AND fk_carro = id_carro AND fk_dispositivo = id_dispositivo order by id_medida desc;
 
-
-
+select * from vwDashTec;
 select * from Dispositivo;
 select * from Medida;
 
@@ -191,4 +203,7 @@ WHERE fk_carro = id_carro AND fk_dispositivo = id_dispositivo AND id_carro = 1 o
     WHERE fk_carro = id_carro AND fk_dispositivo = id_dispositivo AND id_carro = 1
     LIMIT 10;
 
+select *from processo;
+select *from MedidaProcesso;
 
+select * from dispositivo;
