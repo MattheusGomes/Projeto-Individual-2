@@ -21,6 +21,7 @@ def select(query):
 
 
 enderecoMac = getmac.get_mac_address()
+enderecoMac = '87-93-87-EF-B1-0B'
 idCarro = select("select id_carro from Carro where endereco_mac = '" +
                  enderecoMac + "' ;")
 
@@ -72,6 +73,7 @@ def insert_disco(consumo, total):
 
     con = criar_conexao_local()
     cursor = con.cursor()
+
     sql = f"INSERT INTO Medida (horario_registro, fk_dispositivo, valor) VALUES (now(), {idDisco1[0]}, {consumo})"
     cursor.execute(sql)
 
@@ -87,7 +89,6 @@ def insert_proc(dados):
     procExiste = select(
         f"select id from Processo where pid = {dados[0]} and nome = '{dados[1]}' and fk_carro = {idCarro[0]};")
     idP = procExiste
-    print(idP)
 
     if procExiste:
         cpuPer = str(dados[2])
@@ -99,14 +100,12 @@ def insert_proc(dados):
         pID = str(dados[0])
         cpuPer = str(dados[2])
         novoNome = str(dados[1])
-        print(pID, novoNome, cpuPer)
 
         sql = f"INSERT INTO Processo (pid, nome, fk_carro) VALUES ({pID}, '{novoNome}', {idCarro[0]})"
         cursor.execute(sql)
 
         idP = select(
             f"select id from Processo where pid = {pID} and fk_carro = {idCarro[0]} ;")
-        print(idP)
 
         sql = f"INSERT INTO MedidaProcesso (horario_registro, cpu_perc, fk_processo) VALUES (now(), {cpuPer}, {idP[0]})"
         cursor.execute(sql)

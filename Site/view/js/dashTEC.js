@@ -52,30 +52,23 @@ function verCarros() {
 
           if (!carrosMonitorados.includes(idCarro)) {
             if (problema == "RAM") {
-              if (Valor >= 70 && Valor < 90) {
-                estadoRam = "Alerta";
+              if (Valor > 90) {
                 carrosMonitorados.push(idCarro);
-                posicaoCarro.push(index)
-              } else if (Valor > 90) {
-                estadoRam = "Critico";
+                posicaoCarro.push(index);
+              } else if (Valor >= 70 && Valor < 90) {
                 carrosMonitorados.push(idCarro);
-                posicaoCarro.push(index)
-                critico++;
+                posicaoCarro.push(index);
               }
             } else if (problema == "CPU") {
-              if (Valor >= 70 && Valor < 90) {
-                estadoCpu = "Alerta";
+              if (Valor > 90) {
                 carrosMonitorados.push(idCarro);
-                posicaoCarro.push(index)
-              } else if (Valor > 90) {
-                estadoCpu = "Critico";
+                posicaoCarro.push(index);
+              } else if (Valor >= 70 && Valor < 90) {
                 carrosMonitorados.push(idCarro);
-                posicaoCarro.push(index)
-                critico++;
+                posicaoCarro.push(index);
               }
             }
           }
-          carrosCriticos.innerHTML = critico;
         }
         console.log(carrosMonitorados);
         for (var index = 0; index < json.length; index++) {
@@ -87,6 +80,13 @@ function verCarros() {
 
           if (posicaoCarro.includes(index)) {
             if (problema == "RAM" && Valor > 40.0) {
+              if (Valor > 90) {
+                estadoRam = "Critico";
+                critico++;
+              } else if (Valor >= 70 && Valor < 90) {
+                estadoRam = "Alerta";
+              }
+              sessionStorage.ID_Carro = idCarro;
               cardCarros.innerHTML += `<div onclick="detalhes(${idCarro})" class="carro carro${numDiv}">
                                     <ul class="ulTitulo" >
                                     <li>Placa</li>
@@ -102,6 +102,13 @@ function verCarros() {
                                 </ul>
                             </div>`;
             } else if (problema == "CPU" && Valor > 40.0) {
+              if (Valor > 90) {
+                estadoCpu = "Critico";
+                critico++;
+              } else if (Valor >= 70 && Valor < 90) {
+                estadoCpu = "Alerta";
+              }
+              sessionStorage.ID_Carro = idCarro;
               cardCarros.innerHTML += `<div onclick="detalhes(${idCarro})" class="carro carro${numDiv}">
                                 <ul class="ulTitulo" >
                                     <li>Placa</li>
@@ -113,11 +120,12 @@ function verCarros() {
                                 <div class="placaCarro">${placa}</div>
                                 <div class="modeloCarro">${modelo}</div>
                                 <div class="itemComProblema">${problema} ${Valor}%</div>
-                                <div class="estadoCarro">${estadoRam}</div>
+                                <div class="estadoCarro">${estadoCpu}</div>
                                 </ul>
                             </div>`;
             }
 
+            carrosCriticos.innerHTML = critico;
             if (numDiv == 1) {
               numDiv = 2;
             } else {
@@ -131,7 +139,6 @@ function verCarros() {
 }
 
 function detalhes(id) {
-  
   sessionStorage.ID_Carro = id;
   window.location = "./dashTecV2.html";
 }

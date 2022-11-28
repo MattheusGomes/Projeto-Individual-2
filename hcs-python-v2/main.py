@@ -4,17 +4,21 @@ import capturarDados
 import os
 import time
 import platform
-from sql_comandos import  select
+from sql_comandos import select
 
 limpar = 'clear' if platform.system() == 'Linux' else 'cls'
 
 
 def login():
+    print("=-="*30)
+    login = input(str("\033[1mDigite seu login:    \033[0m"))
+    print("=-="*30)
+    senha = input(str("\033[1mDigite sua Senha:    \033[0m"))
+    print("=-="*30)
 
-    #dados = select(f"SELECT * FROM Funcionario WHERE email = '{login}' AND senha = '{senha}' AND cargo = 'TEC';")
-    enderecoMac = 'C2-F2-9F-2A-F9-7C'
-    dados = select(f"SELECT * FROM Carro WHERE endereco_mac = {enderecoMac}")
-    
+    dados = select(
+        f"SELECT * FROM Funcionario WHERE email = '{login}' AND senha = '{senha}';")
+
     while not dados:
         os.system(limpar)
         print("=-="*30)
@@ -30,7 +34,6 @@ def login():
     time.sleep(1)
     os.system(limpar)
     main()
-
 
 def main():
 
@@ -75,6 +78,7 @@ def main():
             os.system(limpar)
             main()
             print(TypeError, NameError)
+
 
 """ 
 intro.callIntro() """
